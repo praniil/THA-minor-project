@@ -2,7 +2,7 @@
 
 **Interactive Chatbot for Mental Wellbeing** is an innovative AI-powered platform designed to provide empathetic, contextually aware mental health support. Built as a single-repository project, it integrates a TypeScript-based frontend and a Flask-powered backend, leveraging GPT-2 fine-tuned on mental health datasets and PostgreSQL for robust database management. This project was developed to explore the intersection of AI and emotional wellbeing, offering users a safe space to express their concerns and receive supportive responses.
 
-![Chatbot User Interface](screenshots/chatbot_response.png)
+![Chatbot User Interface](screenshots/chatbot_interface.png)
 
 ## Team Members
 - **Amrita Shahi** ([@amrita_shahi](https://github.com/amrita_shahi))  
@@ -119,6 +119,11 @@ CREATE TABLE Feedback (
 - Consider increasing `VARCHAR` limits (e.g., from 500 to 1000) for `InteractionLog` fields if longer inputs/responses are expected.
 - Passwords should ideally be hashed (e.g., using `bcrypt`) for security in a production environment.
 
+## Final Result of Our Chatbot
+![Chatbot Interaction with the User](screenshots/chatbot_iteraction_1.png)
+![Chatbot Interaction with the User](screenshots/chatbot_iteraction_2.png)
+![Chatbot Interaction with the User](screenshots/chatbot_iteraction_3.png)
+
 ## Prerequisites
 - **Node.js** and **npm** (for frontend)
 - **Python 3.8+** (for backend)
@@ -131,8 +136,8 @@ Follow these steps to set up the project locally:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/[YourUsername]/interactive-chatbot-for-mental-wellbeing.git
-   cd interactive-chatbot-for-mental-wellbeing
+   git clone git@github.com:praniil/THA-minor-project.git
+   cd THA-minor-project
    ```
 
 2. **Set Up the Database**:
