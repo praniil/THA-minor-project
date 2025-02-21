@@ -17,7 +17,7 @@ def get_database():
     db_url = os.getenv("db_url")
     return psycopg2.connect(db_url)
 
-@app.route("/", methods=["POST"])
+@app.route("https://tha-minor-project-1.onrender.com/", methods=["POST"])
 def post_register_data():
     if request.is_json:
         data = request.get_json()
@@ -82,7 +82,7 @@ def post_register_data():
 
     return jsonify(data)
 
-@app.route("/post_login_data", methods=["POST", "GET"])
+@app.route("https://tha-minor-project-1.onrender.com/post_login_data", methods=["POST", "GET"])
 def post_login_data():
     if request.is_json and request.method == "POST":
         data = request.get_json()
@@ -122,7 +122,7 @@ def post_login_data():
     return jsonify({"message": "Invalid request"}), 400
 
 
-@app.route("/post_userinput", methods=["POST"])
+@app.route("https://tha-minor-project-1.onrender.com/post_userinput", methods=["POST"])
 def post_userinput():
     if request.is_json:
         data = request.get_json()
@@ -188,7 +188,7 @@ def post_userinput():
         return jsonify(response)
 
 
-@app.route("/submit_rating", methods=["POST"])
+@app.route("https://tha-minor-project-1.onrender.com/submit_rating", methods=["POST"])
 def submit_rating():
     if request.is_json:
         data = request.get_json()
@@ -223,7 +223,7 @@ def submit_rating():
     return jsonify({"error": "Invalid request"}), 400
 
 
-@app.route("/submit_feedback", methods=["POST"])
+@app.route("https://tha-minor-project-1.onrender.com/submit_feedback", methods=["POST"])
 def submit_feedback():
     if request.is_json:
         data = request.get_json()

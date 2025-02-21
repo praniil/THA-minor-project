@@ -91,7 +91,7 @@ const Register_Page = () => {
       return
     }
     try {
-      const response = await axios.post('http://127.0.0.1:5000', userDetails, {
+      const response = await axios.post("https://tha-minor-project-1.onrender.com", userDetails, {
         headers: {
           "Content-Type": "application/json",  // Set content type to JSON
         },

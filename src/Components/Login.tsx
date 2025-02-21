@@ -48,7 +48,7 @@ const Login = () => {
 
     try {
       // post requests to login
-      const post_response = await axios.post('http://127.0.0.1:5000/post_login_data', userDetails);
+      const post_response = await axios.post('https://tha-minor-project-1.onrender.com/post_login_data', userDetails);
       console.log("Response:", post_response.data);
       console.log("The user who logged in was:", post_response.data.user);
 

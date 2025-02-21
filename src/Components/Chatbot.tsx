@@ -31,7 +31,7 @@ const Chatbot = () => {
       setIsTyping(true);
 
       try {
-        const response = await axios.post("http://127.0.0.1:5000/post_userinput", { input: userInputText, user_id });
+        const response = await axios.post("https://tha-minor-project-1.onrender.com/post_userinput", { input: userInputText, user_id });
         setTimeout(() => {
           setConversation(prev => [...prev, { sender: "bot", text: response.data.chatbot_response }]);
           setIsTyping(false);
@@ -47,7 +47,7 @@ const Chatbot = () => {
     if (!feedback.trim()) return alert("Please enter feedback before submitting.");
 
     try {
-      await axios.post("http://127.0.0.1:5000/submit_feedback", { feedback, user_id });
+      await axios.post("https://tha-minor-project-1.onrender.com/submit_feedback", { feedback, user_id });
       alert("Thank you for your feedback!");
       setFeedback('');
       setModal(null);
@@ -61,7 +61,7 @@ const Chatbot = () => {
     setModal(null);
 
     try {
-      await axios.post("http://127.0.0.1:5000/submit_rating", { rating: rate, user_id });
+      await axios.post("https://tha-minor-project-1.onrender.com/submit_rating", { rating: rate, user_id });
       alert("Thank you for your rating!");
     } catch (error) {
       console.error("Rating submission error:", error);
