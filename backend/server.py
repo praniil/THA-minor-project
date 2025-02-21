@@ -294,8 +294,10 @@ def submit_feedback():
     return jsonify({"error": "Invalid request"}), 400
 
 
-# Run the Flask app
 if __name__ == "__main__":
-    # Make sure to bind to 0.0.0.0 and the correct port for Render
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 10000)), debug=True)
-
+    # Get the PORT from the environment variable, defaulting to 8080 if not set
+    port = int(os.getenv("PORT", 8080))
+    print(f"Running Flask on 0.0.0.0:{port}")
+    
+    # Run Flask
+    app.run(host="0.0.0.0", port=port, debug=True)
