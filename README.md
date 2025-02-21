@@ -116,7 +116,6 @@ CREATE TABLE Feedback (
 **Notes**:
 - Foreign keys (`user_id`) ensure referential integrity between tables.
 - The schema dynamically creates tables if they don’t exist, as implemented in `server.py`.
-- Consider increasing `VARCHAR` limits (e.g., from 500 to 1000) for `InteractionLog` fields if longer inputs/responses are expected.
 - Passwords should ideally be hashed (e.g., using `bcrypt`) for security in a production environment.
 
 ## User Interaction with Chatbot
