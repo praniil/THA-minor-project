@@ -17,70 +17,80 @@ def get_database():
     db_url = os.getenv("db_url")
     return psycopg2.connect(db_url)
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["POST", "HEAD"])
 def post_register_data():
-    if request.is_json:
-        data = request.get_json()
-        print(data)
+    if request.method == "POST":
+        if request.is_json:
+            # Parse the incoming JSON data
+            data = request.get_json()
+            print(data)
 
-        firstname = data.get("firstname")
-        lastname = data.get("lastname")
-        email = data.get("email")
-        password = data.get("password")
-        confirmPassword = data.get("confirmPassword")
+            firstname = data.get("firstname")
+            lastname = data.get("lastname")
+            email = data.get("email")
+            password = data.get("password")
+            confirmPassword = data.get("confirmPassword")
 
-        # connecting to the database
-        connection = get_database()
-        print("connection established successfully!!")
+            # Database connection
+            connection = get_database()
+            print("Connection established successfully!!")
 
-        # creating a cursor
-        cursor = connection.cursor()
+            # Creating a cursor
+            cursor = connection.cursor()
 
-        # executing the sql queries
-        cursor.execute(
-            """
-            SELECT EXISTS (
-                SELECT 1 
-                FROM information_schema.tables 
-                WHERE table_name = 'useraccount'
-            )
-            """
-        )
-        table_exists = cursor.fetchone()[0]
-
-        # creating the table if it doesn't exist
-        if not table_exists:
+            # Checking if the table exists
             cursor.execute(
                 """
-                CREATE TABLE UserAccount(
-                   user_id SERIAL PRIMARY KEY,
-                    firstname varchar(50) NOT NULL,
-                    lastname varchar(50) NOT NULL,
-                    email varchar(100) NOT NULL UNIQUE,
-                    password varchar(50) NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    last_login TIMESTAMP
+                SELECT EXISTS (
+                    SELECT 1 
+                    FROM information_schema.tables 
+                    WHERE table_name = 'useraccount'
                 )
-            """
+                """
             )
-            print("The table is created successfully!! ")
+            table_exists = cursor.fetchone()[0]
 
-        # inserting the values
-        cursor.execute(
-            """ 
-            INSERT INTO UserAccount(firstname, lastname, email, password)
-                       VALUES(%s,%s,%s,%s)
-        """,
-            (firstname, lastname, email, password),
-        )
+            # Create the table if it doesn't exist
+            if not table_exists:
+                cursor.execute(
+                    """
+                    CREATE TABLE UserAccount(
+                       user_id SERIAL PRIMARY KEY,
+                        firstname varchar(50) NOT NULL,
+                        lastname varchar(50) NOT NULL,
+                        email varchar(100) NOT NULL UNIQUE,
+                        password varchar(50) NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        last_login TIMESTAMP
+                    )
+                    """
+                )
+                print("The table is created successfully!! ")
 
-        # commit the changes
-        connection.commit()
-        cursor.close()
-        connection.close()
-        print("Value is inserted")
+            # Inserting the values into the table
+            cursor.execute(
+                """ 
+                INSERT INTO UserAccount(firstname, lastname, email, password)
+                           VALUES(%s,%s,%s,%s)
+            """,
+                (firstname, lastname, email, password),
+            )
 
-    return jsonify(data)
+            # Commit changes and close the connection
+            connection.commit()
+            cursor.close()
+            connection.close()
+            print("Value inserted successfully.")
+
+            # Return the data as JSON response
+            return jsonify(data), 201  # HTTP 201 Created
+
+        else:
+            return jsonify({"error": "Invalid input. Expected JSON."}), 400
+
+    elif request.method == "HEAD":
+        # Handle HEAD request, which is used to check if the server is up, etc.
+        return "", 200  # Respond with an empty body and 200 OK status
 
 @app.route("/post_login_data", methods=["POST", "GET"])
 def post_login_data():
