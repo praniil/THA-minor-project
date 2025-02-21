@@ -129,9 +129,6 @@ Below are the screenshots showing the series of chatbot interactions with the us
 ### Chatbot Interaction - Part 2:
 ![Chatbot Interaction - Part 2](screenshots/chatbot_iteraction_2.png)
 
-### Chatbot Interaction - Part 3:
-![Chatbot Interaction - Part 3](screenshots/chatbot_iteraction_3.png)
-
 ## Prerequisites
 - **Node.js** and **npm** (for frontend)
 - **Python 3.8+** (for backend)
