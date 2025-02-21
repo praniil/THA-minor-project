@@ -119,10 +119,18 @@ CREATE TABLE Feedback (
 - Consider increasing `VARCHAR` limits (e.g., from 500 to 1000) for `InteractionLog` fields if longer inputs/responses are expected.
 - Passwords should ideally be hashed (e.g., using `bcrypt`) for security in a production environment.
 
-## Final Result of Our Chatbot
-![Chatbot Interaction with the User](screenshots/chatbot_iteraction_1.png)
-![Chatbot Interaction with the User](screenshots/chatbot_iteraction_2.png)
-![Chatbot Interaction with the User](screenshots/chatbot_iteraction_3.png)
+## User Interaction with Chatbot
+
+Below are the screenshots showing the series of chatbot interactions with the user:
+
+### Chatbot Interaction - Part 1:
+![Chatbot Interaction - Part 1](screenshots/chatbot_iteraction_1.png)
+
+### Chatbot Interaction - Part 2:
+![Chatbot Interaction - Part 2](screenshots/chatbot_iteraction_2.png)
+
+### Chatbot Interaction - Part 3:
+![Chatbot Interaction - Part 3](screenshots/chatbot_iteraction_3.png)
 
 ## Prerequisites
 - **Node.js** and **npm** (for frontend)
