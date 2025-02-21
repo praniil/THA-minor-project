@@ -157,8 +157,8 @@ def post_userinput():
                 """
                 CREATE TABLE interactionlog(
                    interaction_id SERIAL PRIMARY KEY,
-                    user_input varchar(500),
-                    llm_response varchar(500),
+                    user_input varchar(1000),
+                    llm_response varchar(1000),
                     user_id INTEGER REFERENCES UserAccount(user_id) -- Reference to user_id
                 )
             """
