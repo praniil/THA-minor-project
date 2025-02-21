@@ -3,5 +3,5 @@ Flask-CORS
 transformers
 python-dotenv
 psycopg2-binary
-torch
+# torch
 
