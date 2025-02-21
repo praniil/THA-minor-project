@@ -296,4 +296,6 @@ def submit_feedback():
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Make sure to bind to 0.0.0.0 and the correct port for Render
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)), debug=True)
+
