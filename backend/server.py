@@ -17,9 +17,11 @@ def get_database():
     db_url = os.getenv("db_url")
     return psycopg2.connect(db_url)
 
-@app.route("/", methods=["POST", "HEAD"])
+@app.route("/", methods=["GET", "POST", "HEAD"])
 def post_register_data():
-    if request.method == "POST":
+    if request.method == "GET":
+        return jsonify({"message": "Server is running!"}), 200
+    elif request.method == "POST":
         if request.is_json:
             # Parse the incoming JSON data
             data = request.get_json()
@@ -292,6 +294,11 @@ def submit_feedback():
         return jsonify({"message": "Feedback submitted successfully"}), 200
 
     return jsonify({"error": "Invalid request"}), 400
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204  # No Content response
+
 
 
 if __name__ == "__main__":
