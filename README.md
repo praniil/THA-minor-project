@@ -1,237 +1,300 @@
-# Interactive Chatbot for Mental Wellbeing
+# Mental Matters
 
-**Interactive Chatbot for Mental Wellbeing** is an innovative AI-powered platform designed to provide empathetic, contextually aware mental health support. Built as a single-repository project, it integrates a TypeScript-based frontend and a Flask-powered backend, leveraging GPT-2 fine-tuned on mental health datasets and PostgreSQL for robust database management. This project was developed to explore the intersection of AI and emotional wellbeing, offering users a safe space to express their concerns and receive supportive responses.
+An AI-assisted mental wellbeing chatbot built as a minor project at the Department of Electronics and Computer Engineering, IOE Thapathali Campus. Mental Matters gives registered users a conversational interface for discussing concerns such as stress, sleep, anxiety, and loneliness, while recording conversations, ratings, and feedback for future improvement.
 
-![Chatbot User Interface](screenshots/chatbot_interface.png)
+> [!IMPORTANT]
+> Mental Matters is an educational prototype, not a medical device or a replacement for a qualified mental-health professional. Its generated responses may be incomplete or incorrect. If you or someone else may be in immediate danger, contact local emergency services or an appropriate crisis helpline.
 
-## Team Members
-- **Amrita Shahi** ([@amritashahi](https://github.com/amritashahi))  
-- **Pranil Parajuli** ([@praniil](https://github.com/praniil))  
-- **Raj Simkhada** ([@RAJ-Git18](https://github.com/RAJ-Git18))  
-- **Sugam Dahal** ([@sugam24](https://github.com/sugam24))  
-*Department of Electronics and Computer Engineering, Tribhuvan University, Institute of Engineering, Thapathali Campus, Kathmandu*
+![Mental Matters chatbot interface](screenshots/chatbot_interface.png)
 
-## Project Motivation
-The rapid evolution of artificial intelligence (AI) technologies has opened avenues for addressing critical social challenges, including emotional isolation and loneliness. In a world where people often feel disconnected despite being digitally connected, there is a rising need for innovative solutions that foster emotional support. Many individuals, especially those who live alone or face social challenges, may lack meaningful interactions, resulting in adverse effects on mental health. The motivation for this project arises from the potential of AI to act as a bridge in providing companionship to those in need. Unlike conventional chatbots that deliver transactional responses, a human-companion chatbot focuses on empathy and understanding. This aligns with the increasing demand for AI systems that can analyze emotions and adapt to user sentiments.
+## What it does
 
-Recent advancements in natural language processing (NLP), voice sentiment analysis, and transformer-based models like GPT have made it possible to create more human-like interactions. By leveraging these technologies, the project aims to develop a system capable of understanding not only what users say but also how they feel. This approach aspires to bring a level of emotional intelligence to AI systems that has been largely absent in existing solutions.
+- Registers users and authenticates returning users.
+- Generates conversational responses with a fine-tuned GPT-2 model hosted on Hugging Face.
+- Provides suggested questions to help users begin a conversation.
+- Stores each user prompt and generated response in PostgreSQL.
+- Collects a one-to-five-star rating and written feedback.
+- Updates a user's existing feedback when they submit it again.
 
-The project is also inspired by the societal need for accessible mental health support tools. By acting as a virtual companion, the chatbot can help individuals alleviate feelings of loneliness, provide a listening ear, and stimulate meaningful conversations. This motivation underpins the belief that AI, when designed thoughtfully, can contribute positively to mental and emotional wellbeing.
+## Architecture
 
-## Project Overview
-The **Interactive Chatbot for Mental Wellbeing** combines a modern frontend built with TypeScript and React, a scalable Flask backend, and a PostgreSQL database to deliver a seamless user experience. The chatbot is fine-tuned on diverse mental health datasets from Hugging Face, enabling it to generate empathetic and relevant responses. Key functionalities include user registration/login, real-time chat, feedback submission, and rating capabilities, all tied together with a robust database architecture.
-
-### Key Features
-- **Empathetic Chatbot**: Powered by a fine-tuned GPT-2 model, the chatbot provides human-like, supportive responses to user inputs on topics like anxiety, stress, and loneliness.
-- **User Management**: Secure registration, login, and profile tracking with PostgreSQL-backed storage.
-- **Real-Time Interaction**: Users can engage in dynamic conversations, with responses logged for analysis.
-- **Feedback & Rating System**: Collects user feedback and ratings to improve chatbot performance.
-- **Predefined Questions**: Offers a list of frequent mental health queries to guide users.
-- **Database-Driven Insights**: Stores interactions, feedback, and ratings for future enhancements.
-
-## Tech Stack
-- **Frontend**: TypeScript, React, Axios, Tailwind CSS 
-- **Backend**: Flask, Flask-CORS, Python
-- **Database**: PostgreSQL
-- **Machine Learning**: GPT-2 (fine-tuned), Transformers, PyTorch
-- **Other Tools**: python-dotenv, psycopg2-binary
-
-## Database Schema
-The database is a cornerstone of this project, ensuring data persistence, user tracking, and interaction logging. Below is the schema derived from the `server.py` file, covering all four tables:
-
-### 1. `UserAccount`
-Stores user registration and authentication details.
-- **user_id**: `SERIAL PRIMARY KEY` - Unique identifier for each user.
-- **firstname**: `VARCHAR(50) NOT NULL` - User’s first name.
-- **lastname**: `VARCHAR(50) NOT NULL` - User’s last name.
-- **email**: `VARCHAR(100) NOT NULL UNIQUE` - User’s email (unique constraint).
-- **password**: `VARCHAR(50) NOT NULL` - User’s password (stored as plain text in this implementation; consider hashing in production).
-- **created_at**: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP` - Account creation timestamp.
-- **last_login**: `TIMESTAMP` - Last login timestamp (nullable).
-
-**SQL Definition**:
-```sql
-CREATE TABLE UserAccount (
-    user_id SERIAL PRIMARY KEY,
-    firstname VARCHAR(50) NOT NULL,
-    lastname VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_login TIMESTAMP
-);
+```mermaid
+flowchart LR
+    U[User] --> SPA[React + TypeScript SPA]
+    SPA -->|JSON over HTTP| API[Flask REST API]
+    API -->|Load tokenizer and model; run inference| HF[Fine-tuned GPT-2 on Hugging Face]
+    API -->|Users, interactions, ratings, feedback| DB[(PostgreSQL)]
 ```
 
-### 2. `InteractionLog`
-Logs all chatbot interactions for analysis and improvement.
-- **interaction_id**: `SERIAL PRIMARY KEY` - Unique identifier for each interaction.
-- **user_input**: `VARCHAR(500)` - User’s input to the chatbot.
-- **llm_response**: `VARCHAR(500)` - Chatbot’s generated response.
-- **user_id**: `INTEGER REFERENCES UserAccount(user_id)` - Foreign key linking to the user.
+The React single-page application contains registration, login, and chatbot views. It calls a Flask API, which coordinates model inference and persistence. The model currently used by the backend is [`Pranilllllll/finetuned_gpt2_45krows_10epochs`](https://huggingface.co/Pranilllllll/finetuned_gpt2_45krows_10epochs).
 
-**SQL Definition**:
-```sql
-CREATE TABLE InteractionLog (
-    interaction_id SERIAL PRIMARY KEY,
-    user_input VARCHAR(500),
-    llm_response VARCHAR(500),
-    user_id INTEGER REFERENCES UserAccount(user_id)
-);
+### Chat request flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as React client
+    participant API as Flask API
+    participant Model as GPT-2 model
+    participant DB as PostgreSQL
+
+    User->>UI: Send a message
+    UI->>API: POST /post_userinput
+    API->>Model: Generate response
+    Model-->>API: Generated text
+    API->>DB: Save prompt, response, and user ID
+    DB-->>API: Commit
+    API-->>UI: JSON response
+    UI-->>User: Display response
 ```
 
-### 3. `Ratings`
-Stores user ratings for the chatbot experience.
-- **rating_id**: `SERIAL PRIMARY KEY` - Unique identifier for each rating.
-- **rating**: `INTEGER NOT NULL` - Rating value (e.g., 1-5).
-- **user_id**: `INTEGER REFERENCES UserAccount(user_id)` - Foreign key linking to the user.
-- **created_at**: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP` - Rating submission timestamp.
+## Technology stack
 
-**SQL Definition**:
-```sql
-CREATE TABLE Ratings (
-    rating_id SERIAL PRIMARY KEY,
-    rating INTEGER NOT NULL,
-    user_id INTEGER REFERENCES UserAccount(user_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 18, TypeScript, React Router, Axios, Tailwind CSS |
+| Backend | Python, Flask, Flask-CORS |
+| Machine learning | Hugging Face Transformers, PyTorch, fine-tuned GPT-2 |
+| Database | PostgreSQL, psycopg2 |
+
+## Repository structure
+
+```text
+.
+├── backend/
+│   ├── ml_models/
+│   │   └── chabot_response.py   # Model loading and text generation
+│   ├── requirements.txt
+│   └── server.py                # Flask routes and database operations
+├── public/                      # Static web assets
+├── screenshots/                 # README screenshots
+├── src/
+│   ├── Components/              # Registration, login, and chat views
+│   ├── App.tsx                  # Client-side routes
+│   └── index.tsx                # React entry point
+├── package.json
+└── tailwind.config.js
 ```
 
-### 4. `Feedback`
-Captures detailed user feedback for iterative improvements.
-- **feedback_id**: `SERIAL PRIMARY KEY` - Unique identifier for each feedback entry.
-- **feedback_message**: `TEXT NOT NULL` - User’s feedback text.
-- **user_id**: `INTEGER REFERENCES UserAccount(user_id)` - Foreign key linking to the user.
-- **created_at**: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP` - Feedback submission timestamp.
+## Getting started
 
-**SQL Definition**:
-```sql
-CREATE TABLE Feedback (
-    feedback_id SERIAL PRIMARY KEY,
-    feedback_message TEXT NOT NULL,
-    user_id INTEGER REFERENCES UserAccount(user_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+### Prerequisites
+
+- Node.js and npm
+- Python 3.9 or newer
+- PostgreSQL
+- Internet access on the backend's first inference request so Transformers can download the hosted model
+- Sufficient memory for local GPT-2 inference; a GPU is optional
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/praniil/THA-minor-project.git
+cd THA-minor-project
 ```
 
-**Notes**:
-- Foreign keys (`user_id`) ensure referential integrity between tables.
-- The schema dynamically creates tables if they don’t exist, as implemented in `server.py`.
-- Passwords should ideally be hashed (e.g., using `bcrypt`) for security in a production environment.
+### 2. Create the PostgreSQL database
 
-## User Interaction with Chatbot
+Create an empty database and retain its connection URL. For example:
 
-Below are the screenshots showing the series of chatbot interactions with the user:
+```sql
+CREATE DATABASE mental_wellbeing_db;
+```
 
-### Chatbot Interaction - Part 1:
-![Chatbot Interaction - Part 1](screenshots/chatbot_iteraction_1.png)
+The API creates its four tables lazily as the corresponding endpoints are used. The database user therefore needs permission to create tables and insert, select, and update rows.
 
-### Chatbot Interaction - Part 2:
-![Chatbot Interaction - Part 2](screenshots/chatbot_iteraction_2.png)
+### 3. Configure and start the backend
 
-## Prerequisites
-- **Node.js** and **npm** (for frontend)
-- **Python 3.8+** (for backend)
-- **PostgreSQL** (for database)
-- **CUDA-enabled GPU** (optional, for model training)
-- A modern web browser
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install torch
+```
 
-## Installation
-Follow these steps to set up the project locally:
+Create `backend/.env`:
 
-1. **Clone the Repository**:
-   ```bash
-   git clone git@github.com:praniil/THA-minor-project.git
-   cd THA-minor-project
-   ```
+```dotenv
+db_url=postgresql://USERNAME:PASSWORD@localhost:5432/mental_wellbeing_db
+PORT=8080
+```
 
-2. **Set Up the Database**:
-   - Install PostgreSQL and create a database (e.g., `mental_wellbeing_db`).
-   - Update the `.env` file with your database URL:
-     ```
-     db_url=postgresql://username:password@localhost:5432/mental_wellbeing_db
-     ```
-   - The backend automatically creates tables on first run.
+Then start Flask from the `backend` directory:
 
-3. **Install Backend Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python server.py
+```
 
-4. **Install Frontend Dependencies**:
-   ```bash
-   npm install
-   ```
+Confirm it is running:
 
-5. **Run the Backend**:
-   ```bash
-   python server.py
-   ```
-   The Flask server runs on `http://127.0.0.1:5000` by default.
+```bash
+curl http://127.0.0.1:8080/
+```
 
-6. **Run the Frontend**:
-   ```bash
-   npm start
-   ```
-   Open `http://localhost:3000` (or your configured port) in your browser.
+The response should be `{"message":"Server is running!"}`.
 
-## Usage
-- **Register/Login**: Create an account or log in to access the chatbot.
-  ![Register page](screenshots/register_page.png)
-- **Chat**: Type a message or select a predefined question to start a conversation.
-- **Feedback/Rating**: Submit feedback or rate the chatbot via the sidebar options.
-- Use tools like Postman to test API endpoints (e.g., `/post_userinput`, `/submit_feedback`).
+> [!NOTE]
+> `torch` is required for inference but is currently commented out in `backend/requirements.txt`, allowing developers to select the appropriate CPU or CUDA build themselves.
 
-## Model Training
-The GPT-2 model was fine-tuned using six mental health datasets from Hugging Face:
+### 4. Install and start the frontend
+
+From another terminal, at the repository root:
+
+```bash
+npm install
+npm start
+```
+
+The app opens at `http://localhost:3000`.
+
+The current frontend components call the deployed API at `https://tha-minor-project-1.onrender.com` directly. To use your local API, replace that origin in:
+
+- `src/Components/Register.tsx`
+- `src/Components/Login.tsx`
+- `src/Components/Chatbot.tsx`
+
+with `http://127.0.0.1:8080`, or refactor it into a shared environment-based API URL. The `proxy` value in `package.json` currently points to port `5000`, while the backend defaults to port `8080`; the two must match if you switch to relative request URLs.
+
+## Using the application
+
+1. Create an account on the registration page.
+2. Log in with the registered email address and password.
+3. Enter a message or choose one of the suggested questions.
+4. Use **Submit Feedback** to add or replace your written feedback.
+5. Use **Rate Us** to submit a rating from one to five stars.
+
+![Registration page](screenshots/register_page.png)
+
+<details>
+<summary>More conversation screenshots</summary>
+
+![Chatbot interaction, part one](screenshots/chatbot_iteraction_1.png)
+
+![Chatbot interaction, part two](screenshots/chatbot_iteraction_2.png)
+
+</details>
+
+## API reference
+
+All request bodies use JSON.
+
+| Method | Endpoint | Purpose | Request fields |
+| --- | --- | --- | --- |
+| `GET`, `HEAD` | `/` | Health check | None |
+| `POST` | `/` | Register an account | `firstname`, `lastname`, `email`, `password`, `confirmPassword` |
+| `POST` | `/post_login_data` | Authenticate an account | `email`, `password` |
+| `POST` | `/post_userinput` | Generate and store a reply | `input`, `user_id` |
+| `POST` | `/submit_rating` | Store a rating | `rating`, `user_id` |
+| `POST` | `/submit_feedback` | Create or update feedback | `feedback`, `user_id` |
+
+Example chat request:
+
+```bash
+curl -X POST http://127.0.0.1:8080/post_userinput \
+  -H "Content-Type: application/json" \
+  -d '{"input":"How can I manage stress?","user_id":1}'
+```
+
+Example response:
+
+```json
+{
+  "user_input": "How can I manage stress?",
+  "chatbot_response": "...generated response..."
+}
+```
+
+## Database model
+
+```mermaid
+erDiagram
+    UserAccount ||--o{ InteractionLog : has
+    UserAccount ||--o{ Ratings : submits
+    UserAccount ||--o{ Feedback : provides
+
+    UserAccount {
+        serial user_id PK
+        varchar firstname
+        varchar lastname
+        varchar email UK
+        varchar password
+        timestamp created_at
+        timestamp last_login
+    }
+    InteractionLog {
+        serial interaction_id PK
+        varchar user_input
+        varchar llm_response
+        integer user_id FK
+    }
+    Ratings {
+        serial rating_id PK
+        integer rating
+        integer user_id FK
+        timestamp created_at
+    }
+    Feedback {
+        serial feedback_id PK
+        text feedback_message
+        integer user_id FK
+        timestamp created_at
+    }
+```
+
+`UserAccount.email` is unique. Interaction text columns are limited to 1,000 characters. The API permits multiple ratings per user, while its feedback logic keeps one effective feedback record per user by updating the first existing record.
+
+## Model background
+
+The hosted GPT-2 checkpoint was fine-tuned for 10 epochs with a batch size of 4 and a learning rate of `3e-5`. The project used mental-health and psychology conversation data from these Hugging Face datasets:
+
 - `marmikpandya/mental-health`
 - `fadodr/mental_health_therapy`
 - `Amod/mental_health_counseling_conversations`
 - `jkhedri/psychology-dataset`
 - `samhog/psychology-6k`
-- `RAJJ18/mental_health_dataset` (subset of 3000 entries)
+- `RAJJ18/mental_health_dataset` (3,000-row subset)
 
-Training details:
-- **Epochs**: 10
-- **Batch Size**: 4
-- **Learning Rate**: 3e-5
-- **Evaluation**: BLEU score for response quality
-- See `model.py` for full implementation.
+The original training and evaluation script is not included in this repository, so the checkpoint cannot be reproduced from this code alone. The backend only contains the inference integration.
 
-## Issues Encountered
-- **Database Setup**: Ensuring dynamic table creation and foreign key constraints worked seamlessly across environments.
-- **Model Fine-Tuning**: Balancing GPU memory usage and training time with large datasets.
-- **Real-Time Latency**: Simulating typing delays (1500ms) to mimic human-like responses while keeping the UI responsive.
-- **Security**: Plain-text passwords in the database (to be addressed in future iterations).
+## Current limitations
+
+This repository is a learning prototype and should not be deployed with sensitive or real patient data in its current form.
+
+- Passwords are stored and compared as plain text; use a slow password hash such as Argon2 or bcrypt before deployment.
+- Authentication does not issue sessions or tokens, and protected endpoints trust the supplied `user_id`.
+- The client hardcodes the deployed backend URL and has no environment-based API configuration.
+- Database tables are created inside request handlers rather than through versioned migrations.
+- Input validation, centralized error handling, rate limiting, and crisis/escalation safeguards are not implemented.
+- The model and tokenizer are downloaded and initialized for every chat request, increasing response latency and memory use.
+- Model output is stochastic and is not checked by a clinical safety layer.
+- The included default frontend test is still the Create React App placeholder and does not match the current interface.
+- The Flask development server runs with debug mode enabled in `server.py` and is not suitable for production.
+
+## Suggested next steps
+
+- Add password hashing, token- or session-based authentication, and endpoint authorization.
+- Load the model once at application startup and add explicit inference error handling.
+- Move the API origin into a frontend environment variable.
+- Add schema migrations, request validation, database constraints for rating ranges, and connection cleanup on errors.
+- Add unit and integration tests for registration, login, inference, feedback, and ratings.
+- Add crisis-language detection, clear escalation guidance, and evaluation with qualified mental-health professionals.
+- Package the frontend, API, database, and model configuration for reproducible deployment.
+
+## Team
+
+- [Amrita Shahi](https://github.com/amritashahi)
+- [Pranil Parajuli](https://github.com/praniil)
+- [Raj Simkhada](https://github.com/RAJ-Git18)
+- [Sugam Dahal](https://github.com/sugam24)
+
+Department of Electronics and Computer Engineering<br>
+Tribhuvan University, Institute of Engineering, Thapathali Campus, Kathmandu
 
 ## Contributing
-We welcome contributions! To contribute:
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/YourFeature`).
-3. Commit changes (`git commit -m "Add YourFeature"`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a pull request.
 
-Please report bugs or suggestions in the Issues section.
+Contributions and suggestions are welcome. Fork the repository, create a focused feature branch, commit your changes, and open a pull request describing what changed and how it was tested. Please avoid committing credentials, `.env` files, model caches, or personal conversation data.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
 
-## Acknowledgments
-- Thanks to our team for their dedication and collaboration.
-- Gratitude to Hugging Face for providing open-source mental health datasets.
-- Appreciation for the open-source community behind React, Flask, and Transformers.
-
-## Future Enhancements
-- **Sentiment Analysis**: Integrate voice or text sentiment analysis for more adaptive responses.
-- **Multi-Platform Support**: Develop a mobile app using React Native.
-- **Expanded Datasets**: Include more diverse mental health data for broader coverage.
-- **Security Upgrades**: Implement password hashing and HTTPS for production.
-
-## Project Architecture
-- **Frontend**: React/TypeScript SPA for user interaction.
-- **Backend**: Flask REST API handling requests and model inference.
-- **Database**: PostgreSQL for structured data storage.
-- **ML Layer**: Fine-tuned GPT-2 for response generation.
-
-For more details, explore the repository or contact the team!
-
+No license file is currently included. Unless a license is added, the project remains under the copyright of its contributors and standard open-source reuse permissions are not granted.
