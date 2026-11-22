@@ -297,4 +297,4 @@ Contributions and suggestions are welcome. Fork the repository, create a focused
 
 ## License
 
-No license file is currently included. Unless a license is added, the project remains under the copyright of its contributors and standard open-source reuse permissions are not granted.
+This project is licensed under the [MIT License](LICENSE).
