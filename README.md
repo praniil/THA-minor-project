@@ -5,7 +5,9 @@ An AI-assisted mental wellbeing chatbot built as a minor project at the Departme
 > [!IMPORTANT]
 > Mental Matters is an educational prototype, not a medical device or a replacement for a qualified mental-health professional. Its generated responses may be incomplete or incorrect. If you or someone else may be in immediate danger, contact local emergency services or an appropriate crisis helpline.
 
-![Mental Matters chatbot interface](screenshots/chatbot_interface.png)
+![Chatbot interaction, part one](screenshots/chatbot_iteraction_1.png)
+
+![Chatbot interaction, part two](screenshots/chatbot_iteraction_2.png)
 
 ## What it does
 
@@ -165,15 +167,6 @@ with `http://127.0.0.1:8080`, or refactor it into a shared environment-based API
 5. Use **Rate Us** to submit a rating from one to five stars.
 
 ![Registration page](screenshots/register_page.png)
-
-<details>
-<summary>More conversation screenshots</summary>
-
-![Chatbot interaction, part one](screenshots/chatbot_iteraction_1.png)
-
-![Chatbot interaction, part two](screenshots/chatbot_iteraction_2.png)
-
-</details>
 
 ## API reference
 
